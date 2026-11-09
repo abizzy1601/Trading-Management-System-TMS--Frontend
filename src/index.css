@@ -1,0 +1,134 @@
+@import "tailwindcss";
+
+/*
+  Design tokens. Values come from the validated data-viz palette:
+  positive/bullish = blue, negative/bearish = red (colorblind-safe pair, never red/green),
+  neutral = gray. Status colours are reserved for state and always ship with an icon and a label.
+*/
+:root {
+  color-scheme: light;
+  --page: #f9f9f7;
+  --surface: #fcfcfb;
+  --surface-2: #f3f2ee;
+  --ink: #0b0b0b;
+  --ink-2: #52514e;
+  --muted: #898781;
+  --grid: #e1e0d9;
+  --axis: #c3c2b7;
+  --line: rgba(11, 11, 11, 0.1);
+  --accent: #2a78d6;
+  --accent-hover: #256abf;
+  --on-accent: #ffffff;
+  --pos: #2a78d6;
+  --neg: #e34948;
+  --pos-text: #256abf;
+  --neg-text: #d03b3b;
+  --neutral: #898781;
+  --good: #0ca30c;
+  --warning: #fab219;
+  --critical: #d03b3b;
+  --track: #cde2fb;
+  --shadow: 0 1px 2px rgba(11, 11, 11, 0.04);
+}
+@media (prefers-color-scheme: dark) {
+  :root:where(:not([data-theme="light"])) {
+    color-scheme: dark;
+    --page: #0d0d0d;
+    --surface: #1a1a19;
+    --surface-2: #242422;
+    --ink: #f0efec;
+    --ink-2: #c3c2b7;
+    --grid: #2c2c2a;
+    --axis: #383835;
+    --line: rgba(255, 255, 255, 0.1);
+    --accent: #3987e5;
+    --accent-hover: #5598e7;
+    --pos: #3987e5;
+    --neg: #e66767;
+    --pos-text: #6da7ec;
+    --neg-text: #e66767;
+    --track: #184f95;
+    --shadow: none;
+  }
+}
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --page: #0d0d0d;
+  --surface: #1a1a19;
+  --surface-2: #242422;
+  --ink: #f0efec;
+  --ink-2: #c3c2b7;
+  --grid: #2c2c2a;
+  --axis: #383835;
+  --line: rgba(255, 255, 255, 0.1);
+  --accent: #3987e5;
+  --accent-hover: #5598e7;
+  --pos: #3987e5;
+  --neg: #e66767;
+  --pos-text: #6da7ec;
+  --neg-text: #e66767;
+  --track: #184f95;
+  --shadow: none;
+}
+
+@theme inline {
+  --color-page: var(--page);
+  --color-surface: var(--surface);
+  --color-surface-2: var(--surface-2);
+  --color-ink: var(--ink);
+  --color-ink-2: var(--ink-2);
+  --color-muted: var(--muted);
+  --color-grid: var(--grid);
+  --color-axis: var(--axis);
+  --color-line: var(--line);
+  --color-accent: var(--accent);
+  --color-accent-hover: var(--accent-hover);
+  --color-on-accent: var(--on-accent);
+  --color-pos: var(--pos);
+  --color-neg: var(--neg);
+  --color-pos-text: var(--pos-text);
+  --color-neg-text: var(--neg-text);
+  --color-neutral: var(--neutral);
+  --color-good: var(--good);
+  --color-warning: var(--warning);
+  --color-critical: var(--critical);
+  --font-sans: system-ui, -apple-system, "Segoe UI", sans-serif;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+}
+body {
+  margin: 0;
+  background: var(--page);
+  color: var(--ink);
+  font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+::selection {
+  background: color-mix(in srgb, var(--accent) 30%, transparent);
+}
+button:not(:disabled),
+[role="button"] {
+  cursor: pointer;
+}
+
+/* Refetch keeps the frame: dim the previous render instead of flashing a skeleton. */
+.refetching {
+  opacity: 0.55;
+  transition: opacity 150ms;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * {
+    transition: none !important;
+    animation: none !important;
+  }
+}
