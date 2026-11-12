@@ -13,6 +13,7 @@ export interface Subscription {
   max_methods: number;
   max_timeframes: number;
   email_alerts: boolean;
+  max_leaders: number;
 }
 
 export interface User {
@@ -176,6 +177,7 @@ export interface Plan {
   max_methods: number;
   max_timeframes: number;
   email_alerts: boolean;
+  max_leaders: number;
   features: string[];
 }
 
@@ -462,4 +464,118 @@ export interface TradePlan {
   plans: { long: PlanSide; short: PlanSide };
   notes: Finding[];
   assumptions: string[];
+}
+
+// ---- copy trading
+export interface LeaderStats {
+  trades: number;
+  win_rate: number;
+  profit_factor: number | null;
+  payoff_ratio: number | null;
+  return_pct: number | null;
+  max_drawdown_pct: number;
+  avg_hold_seconds: number;
+  track_days: number;
+  trades_per_week: number;
+  last_trade_at: string | null;
+  top_symbols: { symbol: string; trades: number; win_rate: number }[];
+}
+
+export interface LeaderCard {
+  id: number;
+  display_name: string;
+  bio: string;
+  followers: number;
+  is_me: boolean;
+  following: boolean;
+  active: boolean;
+  stats: LeaderStats;
+}
+
+export interface PublicTrade {
+  symbol: string;
+  side: "buy" | "sell";
+  opened: string;
+  closed: string;
+  move_pct: number;
+  result: "win" | "loss" | "flat";
+  hold_seconds: number;
+}
+
+export interface LeaderDetail extends LeaderCard {
+  curve: { time: string; pct: number }[];
+  recent_trades: PublicTrade[];
+  risk_text: string;
+}
+
+export interface EligibleAccount {
+  id: number;
+  label: string;
+  trades: number;
+  connected: boolean;
+  eligible: boolean;
+}
+
+export interface MyLeader {
+  leader: LeaderCard | null;
+  account_id: number | null;
+  accounts: EligibleAccount[];
+  min_trades: number;
+  risk_text: string;
+}
+
+export type SizeMode = "proportional" | "fixed";
+
+export interface FollowSettings {
+  size_mode: SizeMode;
+  size_value: number;
+  max_lots: number;
+  max_open_copies: number;
+  daily_loss_stop_pct: number;
+  notify_email: boolean;
+}
+
+export interface Follow extends FollowSettings {
+  id: number;
+  leader_id: number;
+  leader_name: string;
+  leader_active: boolean;
+  account_id: number;
+  account_label: string;
+  status: "active" | "paused" | "stopped";
+  started_at: string;
+  blocked: string | null;
+  feed_delayed: boolean;
+  needs_action: number;
+}
+
+export interface Ticket {
+  id: number;
+  follow_id: number;
+  leader_name: string;
+  symbol: string;
+  display_symbol: string;
+  side: "buy" | "sell";
+  volume: number | null;
+  entry_price: number;
+  stop_loss: number | null;
+  take_profit: number | null;
+  state: "open" | "leader_closed" | "skipped";
+  skip_reason: string | null;
+  response: "taken" | "declined" | null;
+  needs: "copy" | "update" | "close" | null;
+  leader_opened_at: string;
+  created_at: string;
+  changed_at: string | null;
+  change_note: string | null;
+  leader_closed_at: string | null;
+  result_pct: number | null;
+}
+
+export interface SizingPreview {
+  sample: number;
+  typical_lots: number | null;
+  largest_lots: number | null;
+  skipped_pct: number | null;
+  problem: string | null;
 }

@@ -1,8 +1,8 @@
 import { useState } from "react";
 import { NavLink, Outlet, useLocation } from "react-router-dom";
-import { Activity, Calculator, CreditCard, LayoutDashboard, ListOrdered, Lock, LogOut, Menu, MessagesSquare, Moon, Plug, Settings, ShieldAlert, Sun, Target, X } from "lucide-react";
+import { Activity, Calculator, Copy, CreditCard, LayoutDashboard, ListOrdered, Lock, LogOut, Menu, MessagesSquare, Moon, Plug, Settings, ShieldAlert, Sun, Target, X } from "lucide-react";
 import { useAuth } from "../lib/auth";
-import { useConfig, useRiskAlerts, useUnread } from "../lib/queries";
+import { useConfig, usePendingTickets, useRiskAlerts, useUnread } from "../lib/queries";
 import { getTheme, setTheme } from "../lib/theme";
 import { RiskBanner } from "./RiskBanner";
 import { cx, Notice } from "./ui";
@@ -14,6 +14,7 @@ const NAV = [
   { to: "/planner", label: "Trade planner", icon: Target },
   { to: "/risk", label: "Risk & portfolio", icon: ShieldAlert },
   { to: "/calculator", label: "Lot size calculator", icon: Calculator },
+  { to: "/copy", label: "Copy trading", icon: Copy },
   { to: "/analysis", label: "Market bias", icon: Activity, paid: true },
   { to: "/chat", label: "Trader chat", icon: MessagesSquare, paid: true },
   { to: "/billing", label: "Plans & billing", icon: CreditCard },
@@ -45,6 +46,7 @@ export function Layout() {
   const { data: unread = 0 } = useUnread();
   const { data: riskAlerts } = useRiskAlerts();
   const riskUnread = riskAlerts?.unread ?? 0;
+  const { data: copyWaiting = 0 } = usePendingTickets();
   const { data: config } = useConfig();
   const [open, setOpen] = useState(false);
   const location = useLocation();
@@ -67,6 +69,11 @@ export function Layout() {
           {to === "/risk" && riskUnread > 0 && (
             <span className="min-w-5 rounded-full bg-critical px-1.5 text-center text-xs font-semibold text-white" aria-label={`${riskUnread} unread risk alerts`}>
               {riskUnread > 99 ? "99+" : riskUnread}
+            </span>
+          )}
+          {to === "/copy" && copyWaiting > 0 && (
+            <span className="min-w-5 rounded-full bg-accent px-1.5 text-center text-xs font-semibold text-on-accent" aria-label={`${copyWaiting} copy trades waiting`}>
+              {copyWaiting > 99 ? "99+" : copyWaiting}
             </span>
           )}
           {to === "/analysis" && unread > 0 && (

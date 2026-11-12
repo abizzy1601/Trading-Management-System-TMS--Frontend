@@ -15,6 +15,10 @@ import SettingsPage from "./pages/Settings";
 import Risk from "./pages/Risk";
 import CalculatorPage from "./pages/Calculator";
 import TradePlanner from "./pages/TradePlanner";
+import CopyDiscover from "./pages/copy/Discover";
+import CopyLeader from "./pages/copy/LeaderPage";
+import CopyFollowing from "./pages/copy/Following";
+import CopyShare from "./pages/copy/Share";
 
 // The candlestick chart library is only needed on this page, so it loads on demand.
 const SymbolAnalysis = lazy(() => import("./pages/SymbolAnalysis"));
@@ -46,6 +50,10 @@ export default function App() {
         <Route path="/trades" element={<Trades />} />
         <Route path="/accounts" element={<Accounts />} />
         <Route path="/planner" element={<TradePlanner />} />
+        <Route path="/copy" element={<CopyDiscover />} />
+        <Route path="/copy/leaders/:id" element={<CopyLeader />} />
+        <Route path="/copy/following" element={<CopyFollowing />} />
+        <Route path="/copy/share" element={<CopyShare />} />
         <Route path="/risk" element={<Risk />} />
         <Route path="/calculator" element={<CalculatorPage />} />
         <Route path="/analysis" element={<Analysis />} />

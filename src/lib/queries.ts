@@ -2,7 +2,7 @@ import { keepPreviousData, useQuery } from "@tanstack/react-query";
 import { api } from "./api";
 import { useEntitled } from "./auth";
 import type {
-  Account, AnalysisDetail, Analysis, AppConfig, Candle, Catalog, ChatRoom, Feed, Performance, Plan, Portfolio, Position, Preferences, RiskAlerts, RiskSettings, Timeframe, TradePage,
+  Account, AnalysisDetail, Analysis, AppConfig, Candle, Catalog, ChatRoom, Feed, Follow, FollowSettings, LeaderCard, LeaderDetail, MyLeader, Performance, Plan, Portfolio, Position, Preferences, RiskAlerts, RiskSettings, SizingPreview, Ticket, Timeframe, TradePage,
 } from "./types";
 
 export interface PerfFilter {
@@ -113,4 +113,34 @@ export const usePortfolio = (accountId: number | null) =>
     queryFn: () => api<Portfolio>("/risk/portfolio", { query: { account_id: accountId } }),
     placeholderData: keepPreviousData,
     refetchInterval: 60_000,
+  });
+
+// ---- copy trading: browsing is open to everyone; following is part of the paid plan
+export const useLeaders = () => useQuery({ queryKey: ["copy-leaders"], queryFn: () => api<LeaderCard[]>("/copy/leaders"), refetchInterval: 120_000 });
+
+export const useLeader = (id: number) =>
+  useQuery({ queryKey: ["copy-leader", id], queryFn: () => api<LeaderDetail>(`/copy/leaders/${id}`), enabled: Number.isFinite(id) });
+
+export const useMyLeader = () => useQuery({ queryKey: ["copy-me"], queryFn: () => api<MyLeader>("/copy/me/leader") });
+
+export const useFollows = () => useQuery({ queryKey: ["copy-follows"], queryFn: () => api<Follow[]>("/copy/follows"), refetchInterval: 30_000 });
+
+export const useTickets = (view: "action" | "all") =>
+  useQuery({ queryKey: ["copy-tickets", view], queryFn: () => api<Ticket[]>("/copy/tickets", { query: { view, limit: view === "all" ? 40 : 100 } }), refetchInterval: 20_000 });
+
+/** How many tickets are waiting on the user. Drives the badge in the navigation. */
+export const usePendingTickets = () =>
+  useQuery({
+    queryKey: ["copy-pending"],
+    queryFn: () => api<{ pending: number }>("/copy/tickets/pending"),
+    refetchInterval: 20_000,
+    select: (d) => d.pending,
+  });
+
+export const useSizingPreview = (leaderId: number, accountId: number | null, s: Pick<FollowSettings, "size_mode" | "size_value" | "max_lots">) =>
+  useQuery({
+    queryKey: ["copy-preview", leaderId, accountId, s.size_mode, s.size_value, s.max_lots],
+    queryFn: () => api<SizingPreview>(`/copy/leaders/${leaderId}/preview`, { query: { account_id: accountId, size_mode: s.size_mode, size_value: s.size_value, max_lots: s.max_lots } }),
+    enabled: accountId !== null && s.size_value > 0 && s.max_lots > 0,
+    placeholderData: keepPreviousData,
   });
